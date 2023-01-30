@@ -5,7 +5,13 @@ import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { Divider, TextareaAutosize } from '@mui/material';
+import { TextareaAutosize } from '@mui/material';
+import uniqid from 'uniqid';
+import { doc, setDoc } from 'firebase/firestore';
+import { auth, db } from '../../firebase/firebase';
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useDispatch } from 'react-redux'
+import { addPost, PostType } from '../../store/slices/postsSlice';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -21,9 +27,24 @@ const style = {
 };
 
 export const AddPostModal = () => {
+  const [description, setDescription] = React.useState('')
+  const [user] = useAuthState(auth)
+  const dispatch = useDispatch()
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const handlePost = async () => {
+    const post = {
+      description,
+      id: uniqid(),
+      addedBy: user?.uid,
+      timestamp: Date.now()
+    }
+    await setDoc(doc(db, "posts", uniqid()), post);
+    dispatch(addPost(post as PostType))
+    handleClose()
+  }
 
   return (
     <div style={{ textAlign: "center" }}>
@@ -57,13 +78,20 @@ export const AddPostModal = () => {
               aria-label="empty textarea"
               placeholder="Dodaj opis do swojego posta..."
               style={{ maxWidth: "365px", width: "100%", minHeight: "100px" }}
+              value={description}
+              onChange={e => setDescription(e.target.value)}
             />
             <Box sx={{
               display: 'flex',
               flexDirection: "column"
             }}>
               <Button>Wybierz zdjęcie</Button>
-              <Button variant='contained'>Dodaj post</Button>
+              <Button
+                onClick={handlePost}
+                variant='contained'
+              >
+                Dodaj post
+              </Button>
             </Box>
           </Box>
         </Fade>
