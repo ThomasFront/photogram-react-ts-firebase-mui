@@ -13,9 +13,11 @@ import { auth, db } from '../../firebase/firebase';
 import { useNavigate } from 'react-router';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from '@firebase/auth';
-import { addDoc, collection } from '@firebase/firestore';
+import { addDoc, collection, doc, setDoc } from '@firebase/firestore';
+import PermContactCalendarIcon from '@mui/icons-material/PermContactCalendar';
 
 type Inputs = {
+  name: string,
   email: string,
   password: string,
 };
@@ -31,7 +33,15 @@ const RegisterAndLogin = () => {
     }
   }, [user])
 
+  const handleNameValidation = () => {
+    if (registerForm) {
+      return yup.string().required('Nazwa użytkownika jest wymagana').min(6, 'Nazwa musi się składać z min. 6 znaków').max(20, 'Nazwa może zawierać max. 20 znaków')
+    }
+    return yup.string()
+  }
+
   const schema = yup.object().shape({
+    name: handleNameValidation(),
     email: yup.string().email('Wprowadź prawidłowy schemat email').required('Email jest wymagany'),
     password: yup.string().required('Hasło jest wymagane').min(6, 'Hasło musi się składać z min. 6 znaków').max(20, 'Hasło może zawierać max. 20 znaków'),
   });
@@ -40,13 +50,14 @@ const RegisterAndLogin = () => {
     resolver: yupResolver(schema)
   });
 
-  const onSubmit: SubmitHandler<Inputs> = async ({ email, password }) => {
+  const onSubmit: SubmitHandler<Inputs> = async ({ email, password, name }) => {
     try {
       if (registerForm) {
         const res = await createUserWithEmailAndPassword(auth, email, password);
         const user = res.user;
-        await addDoc(collection(db, "users"), {
+        await setDoc(doc(db, "users", user.uid), {
           uid: user.uid,
+          name,
           email,
         });
       } else {
@@ -122,6 +133,24 @@ const RegisterAndLogin = () => {
             onSubmit={handleSubmit(onSubmit)}
             style={{ display: "flex", flexDirection: "column" }}
           >
+            {registerForm &&
+              <TextField
+                {...register("name")}
+                label="Nazwa użytkownika"
+                type="text"
+                variant="filled"
+                sx={{ width: '80%', m: '0 auto' }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <PermContactCalendarIcon />
+                    </InputAdornment>
+                  ),
+                }}
+                error={!!errors.name}
+                helperText={errors.name?.message}
+              />
+            }
             <TextField
               {...register("email")}
               label="Email"
