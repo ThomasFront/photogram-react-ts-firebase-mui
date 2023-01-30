@@ -3,10 +3,21 @@ import { signOut } from 'firebase/auth'
 import React from 'react'
 import { auth } from '../../firebase/firebase'
 import { useSelector } from 'react-redux'
-import { userInfoSelector } from '../../store/slices/userSlice'
+import { clearUser, userInfoSelector } from '../../store/slices/userSlice'
+import { useDispatch } from 'react-redux'
+import { clearPosts } from '../../store/slices/postsSlice'
+import { clearCategory } from '../../store/slices/categorySlice'
 
 const Profile = () => {
   const userInfo = useSelector(userInfoSelector)
+  const dispatch = useDispatch()
+
+  const handleLogout = () => {
+    dispatch(clearPosts())
+    dispatch(clearCategory())
+    dispatch(clearUser())
+    signOut(auth)
+  }
 
   return (
     <Box
@@ -23,7 +34,7 @@ const Profile = () => {
       </Typography>
       <Divider light />
       <Button
-        onClick={() => signOut(auth)}
+        onClick={handleLogout}
         variant="contained"
         sx={{ mt: 4 }}
       >

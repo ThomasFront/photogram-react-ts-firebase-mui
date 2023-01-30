@@ -17,9 +17,12 @@ export const categorySlice = createSlice({
     changeCategory: (state, action: PayloadAction<string>) => {
       state.selectedCategory = action.payload
     },
+    clearCategory: (state) => {
+      state.selectedCategory = 'All'
+    },
   },
 })
 
 export const selectedCategory = (state: RootState) => state.category.selectedCategory
-export const { changeCategory } = categorySlice.actions
+export const { changeCategory, clearCategory } = categorySlice.actions
 export default categorySlice.reducer

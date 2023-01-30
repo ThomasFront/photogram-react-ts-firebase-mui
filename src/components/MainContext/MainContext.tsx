@@ -1,6 +1,5 @@
 import { Box, Container } from '@mui/material'
 import React from 'react'
-import { examplePosts } from '../../helpers'
 import AddPostModal from '../AddPostModal/AddPostModal'
 import SinglePost from '../SinglePost/SinglePost'
 import { useSelector } from 'react-redux'

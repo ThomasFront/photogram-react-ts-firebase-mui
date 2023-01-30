@@ -12,6 +12,8 @@ import { auth, db } from '../../firebase/firebase';
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useDispatch } from 'react-redux'
 import { addPost, PostType } from '../../store/slices/postsSlice';
+import { userInfoSelector } from '../../store/slices/userSlice';
+import { useSelector } from 'react-redux'
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -33,12 +35,14 @@ export const AddPostModal = () => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const userInfo = useSelector(userInfoSelector)
 
   const handlePost = async () => {
     const post = {
       description,
-      id: uniqid(),
-      addedBy: user?.uid,
+      postId: uniqid(),
+      addedById: user?.uid,
+      addedByName: userInfo?.name,
       timestamp: Date.now()
     }
     await setDoc(doc(db, "posts", uniqid()), post);

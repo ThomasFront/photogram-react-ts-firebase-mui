@@ -70,12 +70,14 @@ const RegisterAndLogin = () => {
   };
 
   return (
-    <Container sx={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      minHeight: '100vh',
-    }}
+    <Container
+      maxWidth="lg"
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '100vh',
+      }}
     >
       <Box
         component="img"
