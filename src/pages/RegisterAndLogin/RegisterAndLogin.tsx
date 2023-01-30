@@ -4,19 +4,32 @@ import { Box } from '@mui/system'
 import KeyIcon from '@mui/icons-material/Key';
 import PhoneLogo from '../../assets/images/mainpagePhone.png'
 import Typewriter from 'typewriter-effect';
+import { useForm, SubmitHandler } from "react-hook-form";
 import { useState } from 'react';
+import { typeWriterOptions } from '../../helpers';
+import { yupResolver } from '@hookform/resolvers/yup'
+import * as yup from 'yup'
 
-const typeWriterOptions = {
-  strings: ['Dodawaj zdjęcia i posty...', 'Poznaj nowe osoby...', 'Lajkuj i komentuj...', 'Rozmawiaj ze znajomymi...'],
-  autoStart: true,
-  loop: true,
-  pauseFor: 1000,
-  delay: 70,
-  deleteSpeed: 30
-}
+type Inputs = {
+  email: string,
+  password: string,
+};
 
-const Register = () => {
+const RegisterAndLogin = () => {
   const [registerForm, setRegisterForm] = useState(false)
+
+  const schema = yup.object().shape({
+    email: yup.string().email('Wprowadź prawidłowy schemat email').required('Email jest wymagany'),
+    password: yup.string().required('Hasło jest wymagane').min(6, 'Hasło musi się składać z min. 6 znaków').max(20, 'Hasło może zawierać max. 20 znaków'),
+  });
+
+  const { register, handleSubmit, formState: { errors } } = useForm<Inputs>({
+    resolver: yupResolver(schema)
+  });
+
+  const onSubmit: SubmitHandler<Inputs> = ({ email, password }) => {
+    console.log(email, password)
+  };
 
   const handleLogin = () => {
     setRegisterForm(false)
@@ -85,37 +98,45 @@ const Register = () => {
           mx: 8,
         }}
         >
-          <TextField
-            label="Email"
-            type="email"
-            variant="filled"
-            sx={{ width: '80%', m: '0 auto' }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <AccountCircle />
-                </InputAdornment>
-              ),
-            }}
-          />
-          <TextField
-            label="Hasło"
-            type="password"
-            variant="filled"
-            sx={{ width: '80%', m: '0 auto' }} InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <KeyIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
-          <Button
-            sx={{ width: '80%', m: '20px auto' }}
-            variant="contained"
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            style={{ display: "flex", flexDirection: "column" }}
           >
-            {registerForm ? 'Zarejestruj się' : 'Zaloguj się'}
-          </Button>
+            <TextField
+              {...register("email")}
+              label="Email"
+              type="email"
+              variant="filled"
+              sx={{ width: '80%', m: '0 auto' }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <AccountCircle />
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <TextField
+              {...register("password")}
+              label="Hasło"
+              type="password"
+              variant="filled"
+              sx={{ width: '80%', m: '0 auto' }} InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <KeyIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <Button
+              sx={{ width: '80%', m: '20px auto' }}
+              variant="contained"
+              type='submit'
+            >
+              {registerForm ? 'Zarejestruj się' : 'Zaloguj się'}
+            </Button>
+          </form>
         </Box>
         <Box
           sx={{
@@ -143,4 +164,4 @@ const Register = () => {
   )
 }
 
-export default Register
+export default RegisterAndLogin

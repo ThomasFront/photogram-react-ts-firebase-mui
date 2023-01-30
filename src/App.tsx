@@ -1,12 +1,12 @@
 import { Route, Routes } from "react-router-dom"
-import Register from "./pages/Register/Register"
+import RegisterAndLogin from "./pages/RegisterAndLogin/RegisterAndLogin"
 
 function App() {
 
   return (
     <>
       <Routes>
-        <Route path="/" element={<Register />} />
+        <Route path="/" element={<RegisterAndLogin />} />
       </Routes>
     </>
   )
