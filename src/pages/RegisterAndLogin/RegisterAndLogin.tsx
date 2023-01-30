@@ -5,10 +5,15 @@ import KeyIcon from '@mui/icons-material/Key';
 import PhoneLogo from '../../assets/images/mainpagePhone.png'
 import Typewriter from 'typewriter-effect';
 import { useForm, SubmitHandler } from "react-hook-form";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { typeWriterOptions } from '../../helpers';
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
+import { auth, db } from '../../firebase/firebase';
+import { useNavigate } from 'react-router';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from '@firebase/auth';
+import { addDoc, collection } from '@firebase/firestore';
 
 type Inputs = {
   email: string,
@@ -17,6 +22,14 @@ type Inputs = {
 
 const RegisterAndLogin = () => {
   const [registerForm, setRegisterForm] = useState(false)
+  const [user] = useAuthState(auth)
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (user) {
+      navigate("/home")
+    }
+  }, [user])
 
   const schema = yup.object().shape({
     email: yup.string().email('Wprowadź prawidłowy schemat email').required('Email jest wymagany'),
@@ -27,17 +40,23 @@ const RegisterAndLogin = () => {
     resolver: yupResolver(schema)
   });
 
-  const onSubmit: SubmitHandler<Inputs> = ({ email, password }) => {
-    console.log(email, password)
+  const onSubmit: SubmitHandler<Inputs> = async ({ email, password }) => {
+    try {
+      if (registerForm) {
+        const res = await createUserWithEmailAndPassword(auth, email, password);
+        const user = res.user;
+        await addDoc(collection(db, "users"), {
+          uid: user.uid,
+          email,
+        });
+      } else {
+        await signInWithEmailAndPassword(auth, email, password)
+      }
+      navigate("/home")
+    } catch (error) {
+      console.log(error)
+    }
   };
-
-  const handleLogin = () => {
-    setRegisterForm(false)
-  }
-
-  const handleRegister = () => {
-    setRegisterForm(true)
-  }
 
   return (
     <Container sx={{
@@ -54,7 +73,7 @@ const RegisterAndLogin = () => {
           width: { md: "24%", lg: "22%" },
           mr: "40px",
           border: "1px solid #eaeaea",
-          borderRadius: "28px"
+          borderRadius: "38px",
         }}
         alt="Photogram logo"
         src={PhoneLogo}
@@ -76,6 +95,7 @@ const RegisterAndLogin = () => {
           sx={{
             fontFamily: 'Dancing Script, cursive',
             mt: 4,
+            mb: 2,
             fontSize: { sm: '42px' }
           }}
         >
@@ -157,7 +177,10 @@ const RegisterAndLogin = () => {
             <Button
               size="small"
               sx={{ display: "block" }}
-              onClick={registerForm ? handleLogin : handleRegister}
+              onClick={registerForm ?
+                () => setRegisterForm(false)
+                :
+                () => setRegisterForm(true)}
             >
               {registerForm ? 'Zaloguj się' : 'Zarejestruj się'}
             </Button>
