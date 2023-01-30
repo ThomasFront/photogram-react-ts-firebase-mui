@@ -115,6 +115,8 @@ const RegisterAndLogin = () => {
                   </InputAdornment>
                 ),
               }}
+              error={!!errors.email}
+              helperText={errors.email?.message}
             />
             <TextField
               {...register("password")}
@@ -128,6 +130,8 @@ const RegisterAndLogin = () => {
                   </InputAdornment>
                 ),
               }}
+              error={!!errors.password}
+              helperText={errors.password?.message}
             />
             <Button
               sx={{ width: '80%', m: '20px auto' }}
