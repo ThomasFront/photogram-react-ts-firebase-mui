@@ -9,37 +9,33 @@ import IconButton from '@mui/material/IconButton';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import UserPhoto from '../../assets/images/user.png'
 import ModeCommentIcon from '@mui/icons-material/ModeComment';
+import { PostType } from '../../store/slices/postsSlice';
 
 type PostProps = {
-  post: {
-    id: number,
-    desc: string,
-    url: string,
-    user: string
-  }
+  post: PostType
 }
 
 const SinglePost = ({ post }: any) => {
-  const { desc, url, user } = post
+  const { description, postId, addedById, addedByName, timestamp } = post
 
   return (
-    <Card sx={{ maxWidth: 500, mb: 6 }}>
+    <Card sx={{ maxWidth: 500, minWidth: { xs: 240, sm: 500, md: 400, lg: 650, xl: 700 }, mb: 6, wordBreak: 'break-all' }}>
       <CardHeader
         avatar={
           <Avatar src={UserPhoto} />
         }
-        title={user}
-        subheader="January 14, 2023"
+        title={addedByName}
+        subheader={timestamp}
       />
-      {url && <CardMedia
+      {/* {url && <CardMedia
         component="img"
         height="194"
         image={url}
         alt="Przykładowe zdjęcie"
-      />}
+      />} */}
       <CardContent>
-        <Typography variant="body2" color="text.secondary">
-          {desc}
+        <Typography variant="body2" color="black">
+          {description}
         </Typography>
       </CardContent>
       <CardActions disableSpacing>

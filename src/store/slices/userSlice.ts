@@ -23,9 +23,12 @@ export const userSlice = createSlice({
     updateUser: (state, action: PayloadAction<UserInfoType>) => {
       state.userInfo = action.payload
     },
+    clearUser: (state) => {
+      state.userInfo = null
+    },
   },
 })
 
 export const userInfoSelector = (state: RootState) => state.user.userInfo
-export const { updateUser } = userSlice.actions
+export const { updateUser, clearUser } = userSlice.actions
 export default userSlice.reducer

@@ -18,12 +18,20 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { collection, getDoc, getDocs, query, where } from 'firebase/firestore';
 import { useDispatch } from 'react-redux'
 import { updateUser, UserInfoType } from '../../store/slices/userSlice';
+import { addPost, PostType } from '../../store/slices/postsSlice'
 
 function Navbar() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const [user] = useAuthState(auth)
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+
+  const getFirebasePosts = async () => {
+    const querySnapshot = await getDocs(collection(db, "posts"));
+    querySnapshot.forEach((doc) => {
+      dispatch(addPost(doc.data() as PostType))
+    })
+  }
 
   const getFirebaseUser = async () => {
     try {
@@ -39,13 +47,14 @@ function Navbar() {
 
   useEffect(() => {
     getFirebaseUser()
-  }, [user])
-
-  useEffect(() => {
+    if (user) {
+      getFirebasePosts()
+    }
     if (!user) {
       navigate("/")
     }
   }, [user])
+
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
