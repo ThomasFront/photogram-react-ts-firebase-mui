@@ -13,16 +13,22 @@ import { Avatar, Typography } from '@mui/material';
 import { useDispatch } from 'react-redux/es/exports';
 import { changeCategory } from '../../store/slices/categorySlice';
 import PeopleIcon from '@mui/icons-material/People';
+import { useSelector } from 'react-redux'
+import { userInfoSelector } from '../../store/slices/userSlice';
 
 export const Sidebar = () => {
   const dispatch = useDispatch()
+  const userInfo = useSelector(userInfoSelector)
 
   return (
     <Box sx={{
       display: { xs: "none", md: "block" },
       width: '100%',
       maxWidth: 360,
-      height: '100vh'
+      height: '100vh',
+      position: "sticky",
+      top: 0,
+      left: 0
     }}
     >
       <Divider />
@@ -93,7 +99,7 @@ export const Sidebar = () => {
                   }}
                 />
               </ListItemIcon>
-              <ListItemText primary="Profil" />
+              <ListItemText primary={`Profil (${userInfo?.name})`} />
             </ListItemButton>
           </ListItem>
         </List>

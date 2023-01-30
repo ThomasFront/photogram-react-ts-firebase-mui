@@ -12,14 +12,34 @@ import MenuItem from '@mui/material/MenuItem';
 import { avatarMenuOptions } from '../../helpers';
 import UserAvatar from '../../assets/images/user.png'
 import { signOut } from '@firebase/auth';
-import { auth } from '../../firebase/firebase';
+import { auth, db } from '../../firebase/firebase';
 import { useNavigate } from 'react-router';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import { collection, getDoc, getDocs, query, where } from 'firebase/firestore';
+import { useDispatch } from 'react-redux'
+import { updateUser, UserInfoType } from '../../store/slices/userSlice';
 
 function Navbar() {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const [user] = useAuthState(auth)
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+
+  const getFirebaseUser = async () => {
+    try {
+      if (user) {
+        const q = query(collection(db, "users"), where("uid", "==", user?.uid));
+        const docs = await getDocs(q)
+        dispatch(updateUser(docs.docs[0].data() as UserInfoType))
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    getFirebaseUser()
+  }, [user])
 
   useEffect(() => {
     if (!user) {
