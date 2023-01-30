@@ -6,3 +6,5 @@ export const typeWriterOptions = {
   delay: 70,
   deleteSpeed: 30
 }
+
+export const avatarMenuOptions = ['Mój profil', 'Wyloguj'];

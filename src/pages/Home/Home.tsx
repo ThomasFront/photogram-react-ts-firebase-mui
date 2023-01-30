@@ -1,5 +1,6 @@
 import { signOut } from '@firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import Navbar from '../../components/Navbar/Navbar';
 import { auth } from '../../firebase/firebase';
 
 export const Home = () => {
@@ -7,7 +8,7 @@ export const Home = () => {
   console.log(user)
   return (
     <div>
-      <button onClick={() => signOut(auth)}>Logout</button>
+      <Navbar />
     </div>
   )
 }
