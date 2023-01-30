@@ -1,9 +1,14 @@
+import { Route, Routes } from "react-router-dom"
+import Register from "./pages/Register/Register"
+
 function App() {
 
   return (
-    <div>
-      7
-    </div>
+    <>
+      <Routes>
+        <Route path="/" element={<Register />} />
+      </Routes>
+    </>
   )
 }
 
