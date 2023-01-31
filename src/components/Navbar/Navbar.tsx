@@ -16,15 +16,17 @@ import { auth, db } from '../../firebase/firebase';
 import { useNavigate } from 'react-router';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { collection, getDoc, getDocs, orderBy, query, where } from 'firebase/firestore';
-import { useDispatch } from 'react-redux'
-import { updateUser, UserInfoType } from '../../store/slices/userSlice';
+import { useDispatch, useSelector } from 'react-redux'
+import { updateUser, userInfoSelector, UserInfoType } from '../../store/slices/userSlice';
 import { addPost, PostType } from '../../store/slices/postsSlice'
 import { format } from 'date-fns';
+import ButtonGroupMobile from '../ButtonGroupMobile/ButtonGroupMobile';
 
 function Navbar() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const [user] = useAuthState(auth)
+  const userInfo = useSelector(userInfoSelector)
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
   const getFirebasePosts = async () => {
@@ -88,37 +90,36 @@ function Navbar() {
           py: 1,
         }}
       >
-        <Typography
-          variant="h5"
-          noWrap
-          component="a"
-          href="/home"
-          sx={{
-            mr: 2,
-            display: "flex",
-            fontFamily: 'Dancing Script, cursive, sans-seriff',
-            letterSpacing: '.1rem',
-            color: 'inherit',
-            textDecoration: 'none',
-            fontSize: { xs: '20px', sm: '26px' }
-          }}
-        >
-          Photogram
-        </Typography>
+        <ButtonGroupMobile />
 
-        <Box sx={{ flexGrow: 0 }}>
-          <Tooltip title="Ustawienia">
-            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-              <Avatar
-                alt="Default user avatar"
-                src={UserAvatar}
-                sx={{
-                  width: { xs: '30px', sm: '40px' },
-                  height: { xs: '30px', sm: '40px' }
-                }}
-              />
-            </IconButton>
-          </Tooltip>
+        <Box>
+          <Box sx={{
+            flexGrow: 0,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1.5
+          }}
+          >
+            {userInfo &&
+              <Typography
+                sx={{ display: { xs: 'none', sm: 'block' } }}
+              >
+                {userInfo.name}
+              </Typography>
+            }
+            <Tooltip title="Ustawienia">
+              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                <Avatar
+                  alt="Default user avatar"
+                  src={UserAvatar}
+                  sx={{
+                    width: { xs: '30px', sm: '40px' },
+                    height: { xs: '30px', sm: '40px' }
+                  }}
+                />
+              </IconButton>
+            </Tooltip>
+          </Box>
           <Menu
             sx={{ mt: '45px' }}
             id="menu-appbar"
