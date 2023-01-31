@@ -1,7 +1,9 @@
 import { Typography } from '@mui/material'
 import { Box } from '@mui/system'
 import React from 'react'
+import { useAuthState } from 'react-firebase-hooks/auth'
 import userAvatar from '../../assets/images/user.png'
+import { auth } from '../../firebase/firebase'
 import { UserInfoType } from '../../store/slices/userSlice'
 
 type UserInfoProps = {
@@ -9,6 +11,10 @@ type UserInfoProps = {
 }
 
 const LastUser = ({ userInfo }: UserInfoProps) => {
+  const [user] = useAuthState(auth)
+
+  if (user?.uid === userInfo.uid) return <></>
+
   return (
     <Box sx={{
       display: 'flex',
