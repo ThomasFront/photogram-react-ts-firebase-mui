@@ -11,7 +11,7 @@ import { doc, setDoc } from 'firebase/firestore';
 import { auth, db } from '../../firebase/firebase';
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useDispatch } from 'react-redux'
-import { addPost, PostType } from '../../store/slices/postsSlice';
+import { addPost, addPostToTop, PostType } from '../../store/slices/postsSlice';
 import { userInfoSelector } from '../../store/slices/userSlice';
 import { useSelector } from 'react-redux'
 import { format } from 'date-fns';
@@ -47,10 +47,11 @@ export const AddPostModal = () => {
       timestamp: Date.now()
     }
     await setDoc(doc(db, "posts", uniqid()), post);
-    dispatch(addPost({
+    dispatch(addPostToTop({
       ...post as PostType,
       timestamp: format(post.timestamp, 'Pp')
     }))
+    setDescription("")
     handleClose()
   }
 
