@@ -19,6 +19,7 @@ import { collection, getDoc, getDocs, query, where } from 'firebase/firestore';
 import { useDispatch } from 'react-redux'
 import { updateUser, UserInfoType } from '../../store/slices/userSlice';
 import { addPost, PostType } from '../../store/slices/postsSlice'
+import { format } from 'date-fns';
 
 function Navbar() {
   const navigate = useNavigate()
@@ -29,7 +30,10 @@ function Navbar() {
   const getFirebasePosts = async () => {
     const querySnapshot = await getDocs(collection(db, "posts"));
     querySnapshot.forEach((doc) => {
-      dispatch(addPost(doc.data() as PostType))
+      dispatch(addPost({
+        ...doc.data() as PostType,
+        timestamp: format(doc.data().timestamp, 'Pp')
+      }))
     })
   }
 

@@ -14,6 +14,7 @@ import { useDispatch } from 'react-redux'
 import { addPost, PostType } from '../../store/slices/postsSlice';
 import { userInfoSelector } from '../../store/slices/userSlice';
 import { useSelector } from 'react-redux'
+import { format } from 'date-fns';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -46,7 +47,10 @@ export const AddPostModal = () => {
       timestamp: Date.now()
     }
     await setDoc(doc(db, "posts", uniqid()), post);
-    dispatch(addPost(post as PostType))
+    dispatch(addPost({
+      ...post as PostType,
+      timestamp: format(post.timestamp, 'Pp')
+    }))
     handleClose()
   }
 

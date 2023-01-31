@@ -15,9 +15,10 @@ const Suggestions = () => {
       textAlign: { md: "center", lg: "left" }
     }}
     >
-      {chosenCategory === 'All' && <Typography>
-        Propozycje dla Ciebie:
-      </Typography>}
+      {chosenCategory === 'All' &&
+        <Typography fontSize="14px">
+          Propozycje dla Ciebie:
+        </Typography>}
     </Box>
   )
 }
