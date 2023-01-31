@@ -40,7 +40,7 @@ const Suggestions = () => {
       {chosenCategory === 'All' &&
         <>
           <Typography fontSize="14px">
-            Propozycje dla Ciebie:
+            Najnowsi użytkownicy:
           </Typography>
           <Box sx={{
             display: 'flex',
