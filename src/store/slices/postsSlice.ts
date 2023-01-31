@@ -7,7 +7,7 @@ export type PostType = {
   postId: string,
   addedById: string,
   addedByName: string,
-  timestamp: number
+  timestamp: number | string
 }
 
 type PostsType = Array<PostType>
