@@ -15,7 +15,7 @@ import { signOut } from '@firebase/auth';
 import { auth, db } from '../../firebase/firebase';
 import { useNavigate } from 'react-router';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { collection, getDoc, getDocs, query, where } from 'firebase/firestore';
+import { collection, getDoc, getDocs, orderBy, query, where } from 'firebase/firestore';
 import { useDispatch } from 'react-redux'
 import { updateUser, UserInfoType } from '../../store/slices/userSlice';
 import { addPost, PostType } from '../../store/slices/postsSlice'
@@ -28,7 +28,9 @@ function Navbar() {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
   const getFirebasePosts = async () => {
-    const querySnapshot = await getDocs(collection(db, "posts"));
+    const q = query(collection(db, "posts"), orderBy("timestamp", "desc"));
+    const querySnapshot = await getDocs(q);
+
     querySnapshot.forEach((doc) => {
       dispatch(addPost({
         ...doc.data() as PostType,

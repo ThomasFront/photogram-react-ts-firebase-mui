@@ -27,6 +27,9 @@ export const postsSlice = createSlice({
     addPost: (state, action: PayloadAction<PostType>) => {
       state.posts.push(action.payload)
     },
+    addPostToTop: (state, action: PayloadAction<PostType>) => {
+      state.posts.unshift(action.payload)
+    },
     clearPosts: (state) => {
       state.posts = []
     },
@@ -34,5 +37,5 @@ export const postsSlice = createSlice({
 })
 
 export const allPosts = (state: RootState) => state.posts.posts
-export const { addPost, clearPosts } = postsSlice.actions
+export const { addPost, clearPosts, addPostToTop } = postsSlice.actions
 export default postsSlice.reducer
