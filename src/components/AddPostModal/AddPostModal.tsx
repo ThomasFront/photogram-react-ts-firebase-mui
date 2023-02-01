@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
@@ -24,13 +24,15 @@ const style = {
   maxWidth: 400,
   width: '100%',
   bgcolor: 'background.paper',
-  border: '2px solid #000',
+  border: '1px solid #ababab',
+  borderRadius: '6px',
   boxShadow: 24,
   p: 2,
 };
 
 export const AddPostModal = () => {
-  const [description, setDescription] = React.useState('')
+  const [description, setDescription] = useState('')
+  const [error, setError] = useState(false)
   const [user] = useAuthState(auth)
   const dispatch = useDispatch()
   const [open, setOpen] = React.useState(false);
@@ -39,6 +41,10 @@ export const AddPostModal = () => {
   const userInfo = useSelector(userInfoSelector)
 
   const handlePost = async () => {
+    if (!description) {
+      setError(true)
+      return
+    }
     const post = {
       description,
       postId: uniqid(),
@@ -52,6 +58,7 @@ export const AddPostModal = () => {
       timestamp: format(post.timestamp, 'Pp')
     }))
     setDescription("")
+    setError(false)
     handleClose()
   }
 
@@ -83,6 +90,9 @@ export const AddPostModal = () => {
             <Typography id="transition-modal-title" variant="h6" component="h2" sx={{ mb: 2 }}>
               Opis:
             </Typography>
+            {error &&
+              <Typography sx={{ color: 'crimson', fontSize: '12px' }}>Treść nie może być pusta</Typography>
+            }
             <TextareaAutosize
               aria-label="empty textarea"
               placeholder="Dodaj opis do swojego posta..."
