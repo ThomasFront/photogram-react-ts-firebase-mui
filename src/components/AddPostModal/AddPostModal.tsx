@@ -7,14 +7,15 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { TextareaAutosize } from '@mui/material';
 import uniqid from 'uniqid';
-import { doc, setDoc } from 'firebase/firestore';
-import { auth, db } from '../../firebase/firebase';
+import { addDoc, collection, doc, setDoc } from 'firebase/firestore';
+import { auth, db, storage } from '../../firebase/firebase';
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useDispatch } from 'react-redux'
 import { addPost, addPostToTop, PostType } from '../../store/slices/postsSlice';
 import { userInfoSelector } from '../../store/slices/userSlice';
 import { useSelector } from 'react-redux'
 import { format } from 'date-fns';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -38,23 +39,31 @@ export const AddPostModal = () => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [file, setFile] = useState<null | File>(null)
   const userInfo = useSelector(userInfoSelector)
+  const imageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
 
   const handlePost = async () => {
-    if (!description) {
-      setError(true)
-      return
+    if (!description || !file || !imageTypes.includes(file.type) || !user) {
+      return setError(true)
     }
     const post = {
       description,
-      postId: uniqid(),
-      addedById: user?.uid,
+      addedById: user.uid,
       addedByName: userInfo?.name,
       timestamp: Date.now()
     }
-    await setDoc(doc(db, "posts", uniqid()), post);
+
+    const doc = await addDoc(collection(db, "posts"), post);
+
+    const imageRef = ref(storage, `images/${user.uid}/${doc.id}.jpg`);
+    const image = await uploadBytes(imageRef, file)
+    const url = await getDownloadURL(image.ref)
+
     dispatch(addPostToTop({
       ...post as PostType,
+      postId: doc.id,
+      url,
       timestamp: format(post.timestamp, 'Pp')
     }))
     setDescription("")
@@ -104,7 +113,10 @@ export const AddPostModal = () => {
               display: 'flex',
               flexDirection: "column"
             }}>
-              <Button>Wybierz zdjęcie</Button>
+              <Button variant="contained" component="label">
+                Upload
+                <input hidden accept="image/*" type="file" onChange={e => e.target.files?.length && setFile(e.target.files[0] as File)} />
+              </Button>
               <Button
                 onClick={handlePost}
                 variant='contained'

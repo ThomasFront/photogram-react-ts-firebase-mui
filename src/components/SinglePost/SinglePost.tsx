@@ -17,8 +17,8 @@ type PostProps = {
   post: PostType
 }
 
-const SinglePost = ({ post }: any) => {
-  const { description, postId, addedById, addedByName, timestamp } = post
+const SinglePost = ({ post }: PostProps) => {
+  const { description, addedById, addedByName, timestamp, url } = post
   const [user] = useAuthState(auth)
 
   return (
@@ -36,12 +36,12 @@ const SinglePost = ({ post }: any) => {
         title={user?.uid === addedById ? `Ty (${addedByName})` : addedByName}
         subheader={timestamp}
       />
-      {/* {url && <CardMedia
+      {url && <CardMedia
         component="img"
         height="194"
         image={url}
         alt="Przykładowe zdjęcie"
-      />} */}
+      />}
       <CardContent>
         <Typography variant="body2" color="black">
           {description}

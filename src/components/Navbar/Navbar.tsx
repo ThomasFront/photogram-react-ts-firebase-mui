@@ -12,15 +12,16 @@ import MenuItem from '@mui/material/MenuItem';
 import { avatarMenuOptions } from '../../helpers';
 import UserAvatar from '../../assets/images/user.png'
 import { signOut } from '@firebase/auth';
-import { auth, db } from '../../firebase/firebase';
+import { auth, db, storage } from '../../firebase/firebase';
 import { useNavigate } from 'react-router';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { collection, getDoc, getDocs, orderBy, query, where } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDoc, getDocs, orderBy, query, where } from 'firebase/firestore';
 import { useDispatch, useSelector } from 'react-redux'
 import { updateUser, userInfoSelector, UserInfoType } from '../../store/slices/userSlice';
 import { addPost, loadingOff, PostType } from '../../store/slices/postsSlice'
 import { format } from 'date-fns';
 import ButtonGroupMobile from '../ButtonGroupMobile/ButtonGroupMobile';
+import { getDownloadURL, ref } from 'firebase/storage';
 
 function Navbar() {
   const navigate = useNavigate()
@@ -32,9 +33,14 @@ function Navbar() {
   const getFirebasePosts = async () => {
     const q = query(collection(db, "posts"), orderBy("timestamp", "desc"));
     const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
+    querySnapshot.forEach(async (doc) => {
+      const newPost = doc.data() as PostType
+      const imageRef = ref(storage, `images/${newPost.addedById}/${doc.id}.jpg`)
+      const url = await getDownloadURL(imageRef)
       dispatch(addPost({
-        ...doc.data() as PostType,
+        ...newPost,
+        postId: doc.id,
+        url,
         timestamp: format(doc.data().timestamp, 'Pp')
       }))
     })
