@@ -18,7 +18,7 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { collection, getDoc, getDocs, orderBy, query, where } from 'firebase/firestore';
 import { useDispatch, useSelector } from 'react-redux'
 import { updateUser, userInfoSelector, UserInfoType } from '../../store/slices/userSlice';
-import { addPost, PostType } from '../../store/slices/postsSlice'
+import { addPost, loadingOff, PostType } from '../../store/slices/postsSlice'
 import { format } from 'date-fns';
 import ButtonGroupMobile from '../ButtonGroupMobile/ButtonGroupMobile';
 
@@ -32,13 +32,13 @@ function Navbar() {
   const getFirebasePosts = async () => {
     const q = query(collection(db, "posts"), orderBy("timestamp", "desc"));
     const querySnapshot = await getDocs(q);
-
     querySnapshot.forEach((doc) => {
       dispatch(addPost({
         ...doc.data() as PostType,
         timestamp: format(doc.data().timestamp, 'Pp')
       }))
     })
+    dispatch(loadingOff())
   }
 
   const getFirebaseUser = async () => {

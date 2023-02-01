@@ -6,12 +6,17 @@ import { useEffect, useState } from 'react'
 import { UserInfoType } from '../../store/slices/userSlice'
 import { db } from '../../firebase/firebase'
 import LastUser from '../LastUser/LastUser'
+import Loader from '../Loader/Loader'
+import { postsLoading } from '../../store/slices/postsSlice'
 
 const Suggestions = () => {
   const chosenCategory = useSelector(selectedCategory)
   const [lastUsers, setLastUsers] = useState<Array<UserInfoType>>([])
+  const [loading, setLoading] = useState(true)
+  const postsLoader = useSelector(postsLoading)
 
   const getLastUsers = async () => {
+    setLoading(true)
     const q = query(collection(db, "users"), limit(4));
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach(doc => {
@@ -20,6 +25,7 @@ const Suggestions = () => {
         doc.data() as UserInfoType
       ])
     })
+    setLoading(false)
   }
 
   useEffect(() => {
@@ -39,16 +45,22 @@ const Suggestions = () => {
     >
       {chosenCategory === 'All' &&
         <>
-          <Typography fontSize="14px">
-            Najnowsi użytkownicy:
-          </Typography>
-          <Box sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            my: 0.5,
-          }}>
-            {lastUsers.map(user => <LastUser key={user.uid} userInfo={user} />)}
-          </Box>
+          {loading ?
+            <Loader />
+            :
+            <>
+              <Typography fontSize="14px">
+                Najnowsi użytkownicy:
+              </Typography>
+              <Box sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                my: 0.5,
+              }}>
+                {lastUsers.map(user => <LastUser key={user.uid} userInfo={user} />)}
+              </Box>
+            </>
+          }
         </>
       }
     </Box>
