@@ -14,10 +14,12 @@ type PostsType = Array<PostType>
 
 export interface PostsSlice {
   posts: PostsType
+  loading: boolean
 }
 
 const initialState: PostsSlice = {
   posts: [],
+  loading: true,
 }
 
 export const postsSlice = createSlice({
@@ -33,9 +35,13 @@ export const postsSlice = createSlice({
     clearPosts: (state) => {
       state.posts = []
     },
+    loadingOff: (state) => {
+      state.loading = false
+    },
   },
 })
 
 export const allPosts = (state: RootState) => state.posts.posts
-export const { addPost, clearPosts, addPostToTop } = postsSlice.actions
+export const postsLoading = (state: RootState) => state.posts.loading
+export const { addPost, clearPosts, addPostToTop, loadingOff } = postsSlice.actions
 export default postsSlice.reducer
