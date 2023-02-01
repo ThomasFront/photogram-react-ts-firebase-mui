@@ -7,7 +7,8 @@ export type PostType = {
   postId: string,
   addedById: string,
   addedByName: string,
-  timestamp: number | string
+  timestamp: number | string,
+  url: string
 }
 
 type PostsType = Array<PostType>
@@ -27,7 +28,12 @@ export const postsSlice = createSlice({
   initialState,
   reducers: {
     addPost: (state, action: PayloadAction<PostType>) => {
-      state.posts.push(action.payload)
+      const indexToSplice = state.posts.findIndex(post => post.timestamp < action.payload.timestamp)
+      if(indexToSplice === -1){
+        state.posts.push(action.payload)
+      } else {
+        state.posts.splice(indexToSplice, 0, action.payload)
+      }
     },
     addPostToTop: (state, action: PayloadAction<PostType>) => {
       state.posts.unshift(action.payload)
