@@ -57,7 +57,7 @@ const Profile = () => {
         gap: 2
       }}>
         <img
-          src={userInfo ? userInfo.avatarUrl : userAvatar}
+          src={userInfo?.avatarUrl ? userInfo.avatarUrl : userAvatar}
           alt="Default user avatar"
           style={{ width: '56px', height: '56px', borderRadius: '50%', objectFit: 'cover' }}
         />
