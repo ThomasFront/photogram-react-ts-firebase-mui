@@ -57,15 +57,17 @@ export const AddPostModal = () => {
     const doc = await addDoc(collection(db, "posts"), post);
 
     const imageRef = ref(storage, `images/${user.uid}/${doc.id}.jpg`);
-    const image = await uploadBytes(imageRef, file)
-    const url = await getDownloadURL(image.ref)
+    await uploadBytes(imageRef, file)
+    const url = await getDownloadURL(imageRef)
 
     dispatch(addPostToTop({
       ...post as PostType,
       postId: doc.id,
       url,
+      avatarUrl: userInfo?.avatarUrl || null,
       timestamp: format(post.timestamp, 'Pp')
     }))
+
     setDescription("")
     setError(false)
     handleClose()
