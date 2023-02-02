@@ -26,7 +26,7 @@ import { getDownloadURL, ref } from 'firebase/storage';
 function Navbar() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const [user] = useAuthState(auth)
+  const [user, loading] = useAuthState(auth)
   const userInfo = useSelector(userInfoSelector)
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
@@ -35,12 +35,24 @@ function Navbar() {
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach(async (doc) => {
       const newPost = doc.data() as PostType
+
       const imageRef = ref(storage, `images/${newPost.addedById}/${doc.id}.jpg`)
       const url = await getDownloadURL(imageRef)
+
+      const avatarRef = ref(storage, `avatars/${newPost.addedById}/avatar.jpg`);
+
+      let avatarUrl = null
+      try {
+        avatarUrl = await getDownloadURL(avatarRef)
+      } catch (error) {
+        avatarUrl = null
+      }
+
       dispatch(addPost({
         ...newPost,
         postId: doc.id,
         url,
+        avatarUrl: avatarUrl,
         timestamp: format(doc.data().timestamp, 'Pp')
       }))
     })
@@ -64,7 +76,7 @@ function Navbar() {
     if (user) {
       getFirebasePosts()
     }
-    if (!user) {
+    if (!user && !loading) {
       navigate("/")
     }
   }, [user])

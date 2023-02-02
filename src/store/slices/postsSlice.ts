@@ -8,7 +8,8 @@ export type PostType = {
   addedById: string,
   addedByName: string,
   timestamp: number | string,
-  url: string
+  url: string,
+  avatarUrl: string | null
 }
 
 type PostsType = Array<PostType>

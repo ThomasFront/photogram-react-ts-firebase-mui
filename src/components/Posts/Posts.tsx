@@ -17,7 +17,7 @@ const Posts = () => {
           <Loader />
         </Box>
         :
-        <Box>
+        <Box sx={{ px: 1 }}>
           <AddPostModal />
           {!posts.length &&
             <Typography fontSize="14px" textAlign="center">

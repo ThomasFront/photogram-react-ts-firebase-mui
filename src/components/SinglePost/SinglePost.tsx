@@ -7,7 +7,7 @@ import CardActions from '@mui/material/CardActions';
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import UserPhoto from '../../assets/images/user.png'
+import userPhoto from '../../assets/images/user.png'
 import ModeCommentIcon from '@mui/icons-material/ModeComment';
 import { PostType } from '../../store/slices/postsSlice';
 import { useAuthState } from 'react-firebase-hooks/auth';
@@ -18,7 +18,7 @@ type PostProps = {
 }
 
 const SinglePost = ({ post }: PostProps) => {
-  const { description, addedById, addedByName, timestamp, url } = post
+  const { description, addedById, addedByName, timestamp, url, avatarUrl } = post
   const [user] = useAuthState(auth)
 
   return (
@@ -31,7 +31,7 @@ const SinglePost = ({ post }: PostProps) => {
     >
       <CardHeader
         avatar={
-          <Avatar src={UserPhoto} />
+          <Avatar src={avatarUrl ? avatarUrl : userPhoto} />
         }
         title={user?.uid === addedById ? `Ty (${addedByName})` : addedByName}
         subheader={timestamp}
