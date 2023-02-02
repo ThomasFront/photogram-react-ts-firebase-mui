@@ -100,7 +100,7 @@ export const AddPostModal = () => {
               Opis:
             </Typography>
             {error &&
-              <Typography sx={{ color: 'crimson', fontSize: '12px' }}>Treść nie może być pusta</Typography>
+              <Typography sx={{ color: 'crimson', fontSize: '12px' }}>Nie możesz dodać postu bez treści lub zdjęcia</Typography>
             }
             <TextareaAutosize
               aria-label="empty textarea"
@@ -113,8 +113,11 @@ export const AddPostModal = () => {
               display: 'flex',
               flexDirection: "column"
             }}>
-              <Button variant="contained" component="label">
-                Upload
+              {file &&
+                <Typography fontSize="12px">Wybrano: <span style={{ fontWeight: "bold" }}>{file.name}</span></Typography>
+              }
+              <Button variant="contained" component="label" color='secondary' sx={{ my: 2 }}>
+                Dodaj zdjęcie
                 <input hidden accept="image/*" type="file" onChange={e => e.target.files?.length && setFile(e.target.files[0] as File)} />
               </Button>
               <Button
