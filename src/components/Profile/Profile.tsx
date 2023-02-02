@@ -1,23 +1,45 @@
 import { Box, Button, Divider, Typography } from '@mui/material'
 import { signOut } from 'firebase/auth'
-import React from 'react'
-import { auth } from '../../firebase/firebase'
+import React, { useState } from 'react'
+import { auth, db, storage } from '../../firebase/firebase'
 import { useSelector } from 'react-redux'
-import { clearUser, userInfoSelector } from '../../store/slices/userSlice'
+import { clearUser, updateAvatar, userInfoSelector } from '../../store/slices/userSlice'
 import { useDispatch } from 'react-redux'
 import { clearPosts } from '../../store/slices/postsSlice'
 import { clearCategory } from '../../store/slices/categorySlice'
 import userAvatar from '../../assets/images/user.png'
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
+import { doc, updateDoc } from 'firebase/firestore'
 
 const Profile = () => {
   const userInfo = useSelector(userInfoSelector)
   const dispatch = useDispatch()
+  const [file, setFile] = useState<null | File>(null)
+  const imageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
 
   const handleLogout = () => {
     dispatch(clearPosts())
     dispatch(clearCategory())
     dispatch(clearUser())
     signOut(auth)
+  }
+
+  const updateUserAvatar = async () => {
+    if (!file || !imageTypes.includes(file.type) || !userInfo) {
+      return 'error'
+    }
+
+    const avatarRef = ref(storage, `avatars/${userInfo.uid}/avatar.jpg`);
+    await uploadBytes(avatarRef, file)
+    const avatarUrl = await getDownloadURL(avatarRef)
+
+    const userRef = doc(db, "users", userInfo.uid);
+    await updateDoc(userRef, {
+      avatarUrl
+    });
+
+    dispatch(updateAvatar(avatarUrl))
+
   }
 
   return (
@@ -35,9 +57,9 @@ const Profile = () => {
         gap: 2
       }}>
         <img
-          src={userAvatar}
+          src={userInfo ? userInfo.avatarUrl : userAvatar}
           alt="Default user avatar"
-          style={{ width: '56px' }}
+          style={{ width: '56px', height: '56px', borderRadius: '50%', objectFit: 'cover' }}
         />
         <Box sx={{
           display: 'flex',
@@ -52,7 +74,16 @@ const Profile = () => {
           </Typography>
         </Box>
       </Box>
-      <Divider light />
+      <Button component="label" sx={{ mt: 3 }}>
+        Dodaj avatar
+        <input hidden accept="image/*" multiple type="file" onChange={e => e.target.files?.length && setFile(e.target.files[0] as File)} />
+      </Button>
+      {file &&
+        <Typography fontSize="12px">Wybrano: <span style={{ fontWeight: "bold" }}>{file.name}</span></Typography>
+      }
+      <Button variant="contained" color="secondary" onClick={updateUserAvatar}>
+        Ustaw avatar
+      </Button>
       <Button
         onClick={handleLogout}
         variant="contained"
