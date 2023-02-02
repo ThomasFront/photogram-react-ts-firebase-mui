@@ -8,7 +8,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
 import HomeIcon from '@mui/icons-material/Home';
 import Diversity1Icon from '@mui/icons-material/Diversity1';
-import UserAvatar from '../../assets/images/user.png'
+import userAvatar from '../../assets/images/user.png'
 import { Avatar, Typography } from '@mui/material';
 import { useDispatch } from 'react-redux/es/exports';
 import { changeCategory } from '../../store/slices/categorySlice';
@@ -92,7 +92,7 @@ export const Sidebar = () => {
               <ListItemIcon>
                 <Avatar
                   alt="Default user avatar"
-                  src={UserAvatar}
+                  src={userInfo ? userInfo.avatarUrl : userAvatar}
                   sx={{
                     width: 24,
                     height: 24

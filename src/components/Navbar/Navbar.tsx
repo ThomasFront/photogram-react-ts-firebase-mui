@@ -10,7 +10,7 @@ import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import { avatarMenuOptions } from '../../helpers';
-import UserAvatar from '../../assets/images/user.png'
+import userAvatar from '../../assets/images/user.png'
 import { signOut } from '@firebase/auth';
 import { auth, db, storage } from '../../firebase/firebase';
 import { useNavigate } from 'react-router';
@@ -117,7 +117,7 @@ function Navbar() {
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar
                   alt="Default user avatar"
-                  src={UserAvatar}
+                  src={userInfo ? userInfo.avatarUrl : userAvatar}
                   sx={{
                     width: { xs: '30px', sm: '40px' },
                     height: { xs: '30px', sm: '40px' }
