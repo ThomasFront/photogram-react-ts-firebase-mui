@@ -109,7 +109,6 @@ function Navbar() {
         }}
       >
         <ButtonGroupMobile />
-
         <Box>
           <Box sx={{
             flexGrow: 0,

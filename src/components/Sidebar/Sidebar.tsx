@@ -15,6 +15,7 @@ import { changeCategory } from '../../store/slices/categorySlice';
 import PeopleIcon from '@mui/icons-material/People';
 import { useSelector } from 'react-redux'
 import { userInfoSelector } from '../../store/slices/userSlice';
+import { Link } from 'react-router-dom';
 
 export const Sidebar = () => {
   const dispatch = useDispatch()
@@ -57,7 +58,7 @@ export const Sidebar = () => {
             disablePadding
             sx={{ mt: 2 }}
           >
-            <ListItemButton component="a">
+            <ListItemButton component={Link} to="/home">
               <ListItemIcon>
                 <HomeIcon />
               </ListItemIcon>
@@ -65,9 +66,8 @@ export const Sidebar = () => {
             </ListItemButton>
           </ListItem>
           <ListItem
-            onClick={() => dispatch(changeCategory('Followers'))}
             disablePadding>
-            <ListItemButton component="a">
+            <ListItemButton component={Link} to="/">
               <ListItemIcon>
                 <Diversity1Icon />
               </ListItemIcon>
@@ -75,9 +75,8 @@ export const Sidebar = () => {
             </ListItemButton>
           </ListItem>
           <ListItem
-            onClick={() => dispatch(changeCategory('Users'))}
             disablePadding>
-            <ListItemButton component="a">
+            <ListItemButton component={Link} to="/users">
               <ListItemIcon>
                 <PeopleIcon />
               </ListItemIcon>
@@ -85,10 +84,9 @@ export const Sidebar = () => {
             </ListItemButton>
           </ListItem>
           <ListItem
-            onClick={() => dispatch(changeCategory('Profile'))}
             disablePadding
           >
-            <ListItemButton component="a">
+            <ListItemButton component={Link} to="/profile">
               <ListItemIcon>
                 <Avatar
                   alt="Default user avatar"

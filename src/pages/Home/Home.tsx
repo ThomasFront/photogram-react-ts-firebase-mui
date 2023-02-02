@@ -15,7 +15,8 @@ export const Home = () => {
       <Box sx={{
         display: 'flex',
         justifyContent: 'center',
-        width: '100%'
+        width: '100%',
+        pt: 6
       }}>
         <Outlet />
       </Box>

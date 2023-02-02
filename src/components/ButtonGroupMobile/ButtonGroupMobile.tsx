@@ -3,13 +3,11 @@ import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import { useDispatch } from 'react-redux';
 import { changeCategory } from '../../store/slices/categorySlice'
+import { Link } from 'react-router-dom';
 
 export const ButtonGroupMobile = () => {
   const dispatch = useDispatch()
 
-  const handleCategory = (category: string) => {
-    dispatch(changeCategory(category))
-  }
 
   return (
     <ButtonGroup
@@ -19,21 +17,24 @@ export const ButtonGroupMobile = () => {
     >
       <Button
         sx={{ fontSize: { xs: '8px', sm: '12px' } }}
-        onClick={() => handleCategory('All')}
       >
-        Posty
+        <Link
+          style={{ textDecoration: 'none', color: 'white' }}
+          to="/home">Posty</Link>
       </Button>
       <Button
         sx={{ fontSize: { xs: '8px', sm: '12px' } }}
-        onClick={() => handleCategory('Users')}
       >
-        Społeczność
+        <Link
+          style={{ textDecoration: 'none', color: 'white' }}
+          to="/users">Społeczność</Link>
       </Button>
       <Button
         sx={{ fontSize: { xs: '8px', sm: '12px' } }}
-        onClick={() => handleCategory('Profile')}
       >
-        Profil
+        <Link
+          style={{ textDecoration: 'none', color: 'white' }}
+          to="/profile">Profil</Link>
       </Button>
     </ButtonGroup>
   );
