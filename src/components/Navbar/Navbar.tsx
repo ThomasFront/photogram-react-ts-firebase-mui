@@ -117,7 +117,7 @@ function Navbar() {
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar
                   alt="Default user avatar"
-                  src={userInfo ? userInfo.avatarUrl : userAvatar}
+                  src={userInfo?.avatarUrl ? userInfo.avatarUrl : userAvatar}
                   sx={{
                     width: { xs: '30px', sm: '40px' },
                     height: { xs: '30px', sm: '40px' }

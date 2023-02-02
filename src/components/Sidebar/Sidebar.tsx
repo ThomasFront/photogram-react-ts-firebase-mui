@@ -92,7 +92,7 @@ export const Sidebar = () => {
               <ListItemIcon>
                 <Avatar
                   alt="Default user avatar"
-                  src={userInfo ? userInfo.avatarUrl : userAvatar}
+                  src={userInfo?.avatarUrl ? userInfo.avatarUrl : userAvatar}
                   sx={{
                     width: 24,
                     height: 24
