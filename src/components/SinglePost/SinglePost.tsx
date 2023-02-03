@@ -15,7 +15,7 @@ import { auth, db } from '../../firebase/firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { useDispatch, useSelector } from 'react-redux';
 import { allPosts } from '../../store/slices/postsSlice'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type PostProps = {
   post: PostType
@@ -24,8 +24,18 @@ type PostProps = {
 const SinglePost = ({ post }: PostProps) => {
   const { description, addedById, addedByName, timestamp, url, avatarUrl, likes, postId } = post
   const [user] = useAuthState(auth)
+  const [isLiked, setIsLiked] = useState(false)
   const posts = useSelector(allPosts)
   const dispatch = useDispatch()
+
+  useEffect(() => {
+    if (likes.includes(user?.uid as string)) {
+      setIsLiked(true)
+    } else {
+      false
+    }
+  }, [])
+
 
   const handleLike = async (postId: string) => {
     const docRef = doc(db, "posts", postId);
@@ -49,6 +59,8 @@ const SinglePost = ({ post }: PostProps) => {
       newLikesArray: likesArray,
       postId
     }))
+
+    setIsLiked(prev => !prev)
   }
 
   return (
@@ -81,6 +93,7 @@ const SinglePost = ({ post }: PostProps) => {
         <IconButton
           onClick={() => handleLike(postId)}
           aria-label="add like"
+          sx={{ color: `${isLiked && 'red'}` }}
         >
           <FavoriteIcon />
         </IconButton>
