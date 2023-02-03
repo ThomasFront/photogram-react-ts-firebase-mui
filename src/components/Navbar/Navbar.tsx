@@ -17,8 +17,8 @@ import { useNavigate } from 'react-router';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { collection, deleteDoc, doc, getDoc, getDocs, orderBy, query, where } from 'firebase/firestore';
 import { useDispatch, useSelector } from 'react-redux'
-import { updateUser, userInfoSelector, UserInfoType } from '../../store/slices/userSlice';
-import { addPost, loadingOff, PostType } from '../../store/slices/postsSlice'
+import { clearUser, updateUser, userInfoSelector, UserInfoType } from '../../store/slices/userSlice';
+import { addPost, clearPosts, loadingOff, PostType } from '../../store/slices/postsSlice'
 import { format } from 'date-fns';
 import ButtonGroupMobile from '../ButtonGroupMobile/ButtonGroupMobile';
 import { getDownloadURL, ref } from 'firebase/storage';
@@ -86,13 +86,11 @@ function Navbar() {
     setAnchorElUser(event.currentTarget);
   };
 
-  const handleCloseUserMenu = async (setting: string) => {
-    if (setting === 'Wyloguj') {
-      await signOut(auth)
-      navigate("/")
-    } else if (setting === 'Mój profil') {
-      navigate("/profile")
-    }
+  const handleCloseUserMenu = async () => {
+    dispatch(clearPosts())
+    dispatch(clearUser())
+    await signOut(auth)
+    navigate("/")
     setAnchorElUser(null);
   };
 
@@ -154,7 +152,7 @@ function Navbar() {
             onClose={handleCloseUserMenu}
           >
             {avatarMenuOptions.map((setting) => (
-              <MenuItem key={setting} onClick={() => handleCloseUserMenu(setting)}>
+              <MenuItem key={setting} onClick={() => handleCloseUserMenu()}>
                 <Typography textAlign="center">{setting}</Typography>
               </MenuItem>
             ))}

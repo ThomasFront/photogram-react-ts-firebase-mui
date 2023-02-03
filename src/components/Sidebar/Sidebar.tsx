@@ -11,7 +11,6 @@ import Diversity1Icon from '@mui/icons-material/Diversity1';
 import userAvatar from '../../assets/images/user.png'
 import { Avatar, Typography } from '@mui/material';
 import { useDispatch } from 'react-redux/es/exports';
-import { changeCategory } from '../../store/slices/categorySlice';
 import PeopleIcon from '@mui/icons-material/People';
 import { useSelector } from 'react-redux'
 import { userInfoSelector } from '../../store/slices/userSlice';
@@ -39,8 +38,8 @@ export const Sidebar = () => {
             <Typography
               variant="h5"
               noWrap
-              component="a"
-              href="/home"
+              component={Link}
+              to="/home"
               sx={{
                 ml: 2,
                 fontFamily: 'Dancing Script, cursive, sans-seriff',
@@ -54,7 +53,6 @@ export const Sidebar = () => {
             </Typography>
           </Box>
           <ListItem
-            onClick={() => dispatch(changeCategory('All'))}
             disablePadding
             sx={{ mt: 2 }}
           >

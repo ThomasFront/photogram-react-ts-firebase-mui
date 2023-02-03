@@ -1,5 +1,4 @@
 import { Box, Divider, Typography } from '@mui/material'
-import { selectedCategory } from '../../store/slices/categorySlice'
 import { useSelector } from 'react-redux'
 import { collection, getDocs, limit, query } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
@@ -10,7 +9,6 @@ import Loader from '../Loader/Loader'
 import { postsLoading } from '../../store/slices/postsSlice'
 
 const Suggestions = () => {
-  const chosenCategory = useSelector(selectedCategory)
   const [lastUsers, setLastUsers] = useState<Array<UserInfoType>>([])
   const [loading, setLoading] = useState(true)
   const postsLoader = useSelector(postsLoading)
@@ -43,24 +41,20 @@ const Suggestions = () => {
       textAlign: { md: "center", lg: "left" }
     }}
     >
-      {chosenCategory === 'All' &&
+      {loading ?
+        <Loader />
+        :
         <>
-          {loading ?
-            <Loader />
-            :
-            <>
-              <Typography fontSize="14px">
-                Najnowsi użytkownicy:
-              </Typography>
-              <Box sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                my: 0.5,
-              }}>
-                {lastUsers.map(user => <LastUser key={user.uid} userInfo={user} />)}
-              </Box>
-            </>
-          }
+          <Typography fontSize="14px">
+            Najnowsi użytkownicy:
+          </Typography>
+          <Box sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            my: 0.5,
+          }}>
+            {lastUsers.map(user => <LastUser key={user.uid} userInfo={user} />)}
+          </Box>
         </>
       }
     </Box>

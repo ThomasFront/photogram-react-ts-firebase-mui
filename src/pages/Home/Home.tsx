@@ -16,7 +16,7 @@ export const Home = () => {
         display: 'flex',
         justifyContent: 'center',
         width: '100%',
-        pt: 6
+        pt: 6,
       }}>
         <Outlet />
       </Box>

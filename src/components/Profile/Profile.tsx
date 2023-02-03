@@ -6,7 +6,6 @@ import { useSelector } from 'react-redux'
 import { clearUser, updateAvatar, userInfoSelector } from '../../store/slices/userSlice'
 import { useDispatch } from 'react-redux'
 import { clearPosts } from '../../store/slices/postsSlice'
-import { clearCategory } from '../../store/slices/categorySlice'
 import userAvatar from '../../assets/images/user.png'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import { doc, updateDoc } from 'firebase/firestore'
@@ -19,7 +18,6 @@ const Profile = () => {
 
   const handleLogout = () => {
     dispatch(clearPosts())
-    dispatch(clearCategory())
     dispatch(clearUser())
     signOut(auth)
   }
