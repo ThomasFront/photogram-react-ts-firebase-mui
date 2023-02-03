@@ -9,17 +9,47 @@ import IconButton from '@mui/material/IconButton';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import userPhoto from '../../assets/images/user.png'
 import ModeCommentIcon from '@mui/icons-material/ModeComment';
-import { PostType } from '../../store/slices/postsSlice';
+import { addLikeToPost, PostType } from '../../store/slices/postsSlice';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth } from '../../firebase/firebase';
+import { auth, db } from '../../firebase/firebase';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { useDispatch, useSelector } from 'react-redux';
+import { allPosts } from '../../store/slices/postsSlice'
+import { useState } from 'react';
 
 type PostProps = {
   post: PostType
 }
 
 const SinglePost = ({ post }: PostProps) => {
-  const { description, addedById, addedByName, timestamp, url, avatarUrl } = post
+  const { description, addedById, addedByName, timestamp, url, avatarUrl, likes, postId } = post
   const [user] = useAuthState(auth)
+  const posts = useSelector(allPosts)
+  const dispatch = useDispatch()
+
+  const handleLike = async (postId: string) => {
+    const docRef = doc(db, "posts", postId);
+    const docSnap = await getDoc(docRef) as any;
+    const likesArray = docSnap.data().likes
+    const isUserInArray = likesArray.findIndex((id: string) => id === user?.uid)
+
+    if (isUserInArray === -1) {
+      likesArray.push(user?.uid)
+    } else {
+      const userIdToDelete = likesArray.find((id: string) => id === user?.uid)
+      likesArray.splice(userIdToDelete, 1)
+    }
+
+    const postRef = doc(db, "posts", postId);
+    await updateDoc(postRef, {
+      likes: likesArray
+    });
+
+    dispatch(addLikeToPost({
+      newLikesArray: likesArray,
+      postId
+    }))
+  }
 
   return (
     <Card sx={{
@@ -48,7 +78,10 @@ const SinglePost = ({ post }: PostProps) => {
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <IconButton aria-label="add like">
+        <IconButton
+          onClick={() => handleLike(postId)}
+          aria-label="add like"
+        >
           <FavoriteIcon />
         </IconButton>
         <IconButton aria-label="add comment">
