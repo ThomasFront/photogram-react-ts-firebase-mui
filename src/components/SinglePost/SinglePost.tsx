@@ -38,7 +38,7 @@ const SinglePost = ({ post }: PostProps) => {
       />
       {url && <CardMedia
         component="img"
-        height="194"
+        height="400"
         image={url}
         alt="Przykładowe zdjęcie"
       />}

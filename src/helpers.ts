@@ -7,4 +7,4 @@ export const typeWriterOptions = {
   deleteSpeed: 30
 }
 
-export const avatarMenuOptions = ['Mój profil', 'Wyloguj'];
+export const avatarMenuOptions = ['Wyloguj'];

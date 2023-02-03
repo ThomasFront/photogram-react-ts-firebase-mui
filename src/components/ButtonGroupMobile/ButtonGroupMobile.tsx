@@ -2,11 +2,9 @@ import * as React from 'react';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import { useDispatch } from 'react-redux';
-import { changeCategory } from '../../store/slices/categorySlice'
 import { Link } from 'react-router-dom';
 
 export const ButtonGroupMobile = () => {
-  const dispatch = useDispatch()
 
 
   return (
