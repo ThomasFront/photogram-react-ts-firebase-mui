@@ -9,10 +9,16 @@ export type PostType = {
   addedByName: string,
   timestamp: number | string,
   url: string,
-  avatarUrl: string | null
+  avatarUrl: string | null,
+  likes: Array<string>
 }
 
 type PostsType = Array<PostType>
+
+type LikesType = {
+  newLikesArray: Array<string>,
+  postId: string
+}
 
 export interface PostsSlice {
   posts: PostsType
@@ -39,6 +45,10 @@ export const postsSlice = createSlice({
     addPostToTop: (state, action: PayloadAction<PostType>) => {
       state.posts.unshift(action.payload)
     },
+    addLikeToPost: (state, action: PayloadAction<LikesType>) => {
+      const indexToEdit = state.posts.findIndex(post => post.postId === action.payload.postId)
+      state.posts[indexToEdit].likes = action.payload.newLikesArray
+    },
     clearPosts: (state) => {
       state.posts = []
     },
@@ -50,5 +60,5 @@ export const postsSlice = createSlice({
 
 export const allPosts = (state: RootState) => state.posts.posts
 export const postsLoading = (state: RootState) => state.posts.loading
-export const { addPost, clearPosts, addPostToTop, loadingOff } = postsSlice.actions
+export const { addPost, clearPosts, addPostToTop, loadingOff, addLikeToPost } = postsSlice.actions
 export default postsSlice.reducer

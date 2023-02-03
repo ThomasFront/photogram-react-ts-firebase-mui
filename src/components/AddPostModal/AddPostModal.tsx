@@ -44,14 +44,15 @@ export const AddPostModal = () => {
   const imageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
 
   const handlePost = async () => {
-    if (!description || !file || !imageTypes.includes(file.type) || !user) {
+    if (!description || !file || !imageTypes.includes(file.type) || !user || !userInfo) {
       return setError(true)
     }
     const post = {
       description,
       addedById: user.uid,
-      addedByName: userInfo?.name,
-      timestamp: Date.now()
+      addedByName: userInfo.name,
+      timestamp: Date.now(),
+      likes: [],
     }
 
     const doc = await addDoc(collection(db, "posts"), post);
@@ -61,7 +62,7 @@ export const AddPostModal = () => {
     const url = await getDownloadURL(imageRef)
 
     dispatch(addPostToTop({
-      ...post as PostType,
+      ...post,
       postId: doc.id,
       url,
       avatarUrl: userInfo?.avatarUrl || null,
