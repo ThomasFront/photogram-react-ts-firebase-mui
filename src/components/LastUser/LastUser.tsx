@@ -1,9 +1,10 @@
 import { Typography } from '@mui/material'
 import { Box } from '@mui/system'
-import React from 'react'
+import { getDownloadURL, ref } from 'firebase/storage'
+import React, { useEffect, useState } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import userAvatar from '../../assets/images/user.png'
-import { auth } from '../../firebase/firebase'
+import { auth, storage } from '../../firebase/firebase'
 import { UserInfoType } from '../../store/slices/userSlice'
 
 type UserInfoProps = {
@@ -12,6 +13,23 @@ type UserInfoProps = {
 
 const LastUser = ({ userInfo }: UserInfoProps) => {
   const [user] = useAuthState(auth)
+  const [avatar, setAvatar] = useState<string | null>(null)
+
+  const getUserAvatar = async () => {
+    const avatarRef = ref(storage, `avatars/${userInfo.uid}/avatar.jpg`);
+    let avatarUrl = null
+
+    try {
+      avatarUrl = await getDownloadURL(avatarRef)
+    } catch (err) {
+      avatarUrl = null
+    }
+    setAvatar(avatarUrl)
+  }
+
+  useEffect(() => {
+    getUserAvatar()
+  }, [])
 
   if (user?.uid === userInfo.uid) return <></>
 
@@ -23,8 +41,8 @@ const LastUser = ({ userInfo }: UserInfoProps) => {
       my: 0.4,
     }}>
       <img
-        style={{ width: '24px' }}
-        src={userAvatar}
+        style={{ width: '24px', height: '24px', borderRadius: '50%' }}
+        src={avatar ? avatar : userAvatar}
         alt="Default user avatar"
       />
       <Typography>
