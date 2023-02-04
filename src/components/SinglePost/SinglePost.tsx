@@ -32,7 +32,7 @@ const SinglePost = ({ post }: PostProps) => {
     if (likes.includes(user?.uid as string)) {
       setIsLiked(true)
     } else {
-      false
+      setIsLiked(false)
     }
   }, [])
 
@@ -46,7 +46,7 @@ const SinglePost = ({ post }: PostProps) => {
     if (isUserInArray === -1) {
       likesArray.push(user?.uid)
     } else {
-      const userIdToDelete = likesArray.find((id: string) => id === user?.uid)
+      const userIdToDelete = likesArray.findIndex((id: string) => id === user?.uid)
       likesArray.splice(userIdToDelete, 1)
     }
 
@@ -61,6 +61,19 @@ const SinglePost = ({ post }: PostProps) => {
     }))
 
     setIsLiked(prev => !prev)
+  }
+
+  const showLikes = () => {
+    const postIndex = posts.findIndex(post => post.postId === postId)
+    const allLikes = posts[postIndex].likes
+    const isUserInArray = allLikes.includes(user?.uid as string)
+
+    if (isUserInArray && allLikes.length === 1) {
+      return 'Lubisz to'
+    } else if (isUserInArray && allLikes.length > 1) {
+      return `Ty i ${allLikes.length - 1}`
+    }
+    return allLikes.length
   }
 
   return (
@@ -93,10 +106,11 @@ const SinglePost = ({ post }: PostProps) => {
         <IconButton
           onClick={() => handleLike(postId)}
           aria-label="add like"
-          sx={{ color: `${isLiked && 'red'}` }}
+          sx={{ color: `${isLiked && 'rgb(227, 41, 27)'}` }}
         >
           <FavoriteIcon />
         </IconButton>
+        <Typography>{showLikes()}</Typography>
         <IconButton aria-label="add comment">
           <ModeCommentIcon />
         </IconButton>
