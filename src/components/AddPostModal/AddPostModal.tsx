@@ -73,6 +73,7 @@ export const AddPostModal = () => {
     setDescription("")
     setError(false)
     handleClose()
+    setFile(null)
   }
 
   return (
