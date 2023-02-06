@@ -6,7 +6,7 @@ export type UserInfoType = {
   uid: string,
   email: string,
   name: string,
-  avatarUrl: string
+  avatarUrl?: string
 }
 
 export interface UserState {

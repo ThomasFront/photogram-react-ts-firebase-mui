@@ -5,6 +5,7 @@ import { RootState } from '../store'
 export type CommentType = {
   comment: string,
   addedBy: string,
+  addedById: string,
   timestamp: number
 }
 

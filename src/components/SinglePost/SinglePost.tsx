@@ -18,19 +18,21 @@ import { allPosts } from '../../store/slices/postsSlice'
 import { useEffect, useState } from 'react';
 import { Box } from '@mui/system';
 import SingleComment from '../SingleComment/SingleComment';
+import { Link } from 'react-router-dom';
+import { userInfoSelector } from '../../store/slices/userSlice';
 
 type PostProps = {
   post: PostType
 }
 
 const SinglePost = ({ post }: PostProps) => {
-  const { description, addedById, addedByName, timestamp, url, avatarUrl, likes, postId } = post
+  const { description, addedById, addedByName, timestamp, url, avatarUrl, likes, postId, comments } = post
   const [user] = useAuthState(auth)
   const [isLiked, setIsLiked] = useState(false)
   const posts = useSelector(allPosts)
   const dispatch = useDispatch()
   const [comment, setComment] = useState('')
-  const currentIndex = posts.findIndex(post => post.postId === postId)
+  const userInfo = useSelector(userInfoSelector)
 
   useEffect(() => {
     if (likes.includes(user?.uid as string)) {
@@ -41,27 +43,30 @@ const SinglePost = ({ post }: PostProps) => {
   }, [])
 
   const handleComment = async () => {
-    const docRef = doc(db, "posts", postId);
-    const docSnap = await getDoc(docRef) as any;
-    const commentsArray = docSnap.data().comments
+    if (comment) {
+      const docRef = doc(db, "posts", postId);
+      const docSnap = await getDoc(docRef) as any;
+      const commentsArray = docSnap.data().comments
 
-    commentsArray.unshift({
-      comment,
-      addedBy: docSnap.data().addedByName,
-      timestamp: Date.now()
-    })
+      commentsArray.unshift({
+        comment,
+        addedBy: userInfo?.name,
+        addedById: user?.uid,
+        timestamp: Date.now()
+      })
 
-    const postRef = doc(db, "posts", postId);
-    await updateDoc(postRef, {
-      comments: commentsArray
-    });
+      const postRef = doc(db, "posts", postId);
+      await updateDoc(postRef, {
+        comments: commentsArray
+      });
 
-    dispatch(addCommentToPost({
-      newCommentsArray: commentsArray,
-      postId
-    }))
+      dispatch(addCommentToPost({
+        newCommentsArray: commentsArray,
+        postId
+      }))
 
-    setComment('')
+      setComment('')
+    }
   }
 
 
@@ -109,7 +114,7 @@ const SinglePost = ({ post }: PostProps) => {
       maxWidth: 500,
       minWidth: { xs: 240, sm: 500, md: 400, lg: 650, xl: 700 },
       mb: 6,
-      wordBreak: 'break-all'
+      wordBreak: 'break-all',
     }}
     >
       <CardHeader
@@ -118,6 +123,9 @@ const SinglePost = ({ post }: PostProps) => {
         }
         title={user?.uid === addedById ? `Ty (${addedByName})` : addedByName}
         subheader={timestamp}
+        component={Link}
+        to={`/profile/${addedById}`}
+        sx={{ color: 'black', textDecoration: 'none' }}
       />
       {url && <CardMedia
         component="img"
@@ -139,19 +147,27 @@ const SinglePost = ({ post }: PostProps) => {
           <FavoriteIcon />
         </IconButton>
         <Typography>{showLikes()}</Typography>
-        <IconButton aria-label="add comment">
+        <IconButton
+          aria-label="add comment"
+        >
           <ModeCommentIcon />
         </IconButton>
       </CardActions>
       <Box sx={{
         display: 'flex'
       }}>
-        <TextField label="Napisz komentarz..." variant="filled" sx={{ width: '70%' }} value={comment} onChange={e => setComment(e.target.value)} />
+        <TextField
+          label="Napisz komentarz..."
+          variant="filled"
+          sx={{ width: '70%' }}
+          value={comment}
+          onChange={e => setComment(e.target.value)}
+        />
         <Button variant='contained' size='small' sx={{ width: { xs: '50%', sm: '30%', md: '32%', lg: '30%' }, fontSize: { xs: '9px', sm: '12px', md: '10px', lg: '12px' } }} onClick={handleComment}>Dodaj komentarz</Button>
       </Box>
-      {posts[currentIndex].comments.length > 0 &&
+      {comments.length > 0 &&
         <Box sx={{ p: '10px' }}>
-          {posts[currentIndex].comments.map(comment => <SingleComment key={comment.comment} comment={comment} />)}
+          {comments.map(comment => <SingleComment key={comment.comment} comment={comment} />)}
         </Box>
       }
     </Card>
