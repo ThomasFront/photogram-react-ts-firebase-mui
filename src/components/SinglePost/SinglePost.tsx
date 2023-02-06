@@ -9,7 +9,7 @@ import IconButton from '@mui/material/IconButton';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import userPhoto from '../../assets/images/user.png'
 import ModeCommentIcon from '@mui/icons-material/ModeComment';
-import { addLikeToPost, PostType } from '../../store/slices/postsSlice';
+import { addCommentToPost, addLikeToPost, PostType } from '../../store/slices/postsSlice';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth, db } from '../../firebase/firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { allPosts } from '../../store/slices/postsSlice'
 import { useEffect, useState } from 'react';
 import { Box } from '@mui/system';
+import SingleComment from '../SingleComment/SingleComment';
 
 type PostProps = {
   post: PostType
@@ -29,6 +30,7 @@ const SinglePost = ({ post }: PostProps) => {
   const posts = useSelector(allPosts)
   const dispatch = useDispatch()
   const [comment, setComment] = useState('')
+  const currentIndex = posts.findIndex(post => post.postId === postId)
 
   useEffect(() => {
     if (likes.includes(user?.uid as string)) {
@@ -38,8 +40,32 @@ const SinglePost = ({ post }: PostProps) => {
     }
   }, [])
 
+  const handleComment = async () => {
+    const docRef = doc(db, "posts", postId);
+    const docSnap = await getDoc(docRef) as any;
+    const commentsArray = docSnap.data().comments
 
-  const handleLike = async (postId: string) => {
+    commentsArray.unshift({
+      comment,
+      addedBy: docSnap.data().addedByName,
+      timestamp: Date.now()
+    })
+
+    const postRef = doc(db, "posts", postId);
+    await updateDoc(postRef, {
+      comments: commentsArray
+    });
+
+    dispatch(addCommentToPost({
+      newCommentsArray: commentsArray,
+      postId
+    }))
+
+    setComment('')
+  }
+
+
+  const handleLike = async () => {
     const docRef = doc(db, "posts", postId);
     const docSnap = await getDoc(docRef) as any;
     const likesArray = docSnap.data().likes
@@ -106,7 +132,7 @@ const SinglePost = ({ post }: PostProps) => {
       </CardContent>
       <CardActions disableSpacing>
         <IconButton
-          onClick={() => handleLike(postId)}
+          onClick={handleLike}
           aria-label="add like"
           sx={{ color: `${isLiked && 'rgb(227, 41, 27)'}` }}
         >
@@ -121,8 +147,13 @@ const SinglePost = ({ post }: PostProps) => {
         display: 'flex'
       }}>
         <TextField label="Napisz komentarz..." variant="filled" sx={{ width: '70%' }} value={comment} onChange={e => setComment(e.target.value)} />
-        <Button variant='contained' size='small' sx={{ width: { xs: '50%', sm: '30%', md: '32%', lg: '30%' }, fontSize: { xs: '9px', sm: '12px', md: '10px', lg: '12px' } }}>Dodaj komentarz</Button>
+        <Button variant='contained' size='small' sx={{ width: { xs: '50%', sm: '30%', md: '32%', lg: '30%' }, fontSize: { xs: '9px', sm: '12px', md: '10px', lg: '12px' } }} onClick={handleComment}>Dodaj komentarz</Button>
       </Box>
+      {posts[currentIndex].comments.length > 0 &&
+        <Box sx={{ p: '10px' }}>
+          {posts[currentIndex].comments.map(comment => <SingleComment key={comment.comment} comment={comment} />)}
+        </Box>
+      }
     </Card>
   )
 }

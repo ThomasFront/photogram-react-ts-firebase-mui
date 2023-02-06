@@ -2,6 +2,12 @@ import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '../store'
 
+export type CommentType = {
+  comment: string,
+  addedBy: string,
+  timestamp: number
+}
+
 export type PostType = {
   description: string
   postId: string,
@@ -10,7 +16,8 @@ export type PostType = {
   timestamp: number | string,
   url: string,
   avatarUrl: string | null,
-  likes: Array<string>
+  likes: Array<string>,
+  comments: Array<CommentType>
 }
 
 type PostsType = Array<PostType>
@@ -49,6 +56,10 @@ export const postsSlice = createSlice({
       const indexToEdit = state.posts.findIndex(post => post.postId === action.payload.postId)
       state.posts[indexToEdit].likes = action.payload.newLikesArray
     },
+    addCommentToPost: (state, action: PayloadAction<any>) => {
+      const indexToEdit = state.posts.findIndex(post => post.postId === action.payload.postId)
+      state.posts[indexToEdit].comments = action.payload.newCommentsArray
+    },
     clearPosts: (state) => {
       state.posts = []
     },
@@ -60,5 +71,5 @@ export const postsSlice = createSlice({
 
 export const allPosts = (state: RootState) => state.posts.posts
 export const postsLoading = (state: RootState) => state.posts.loading
-export const { addPost, clearPosts, addPostToTop, loadingOff, addLikeToPost } = postsSlice.actions
+export const { addPost, clearPosts, addPostToTop, loadingOff, addLikeToPost, addCommentToPost } = postsSlice.actions
 export default postsSlice.reducer

@@ -37,7 +37,7 @@ const Profile = () => {
     });
 
     dispatch(updateAvatar(avatarUrl))
-
+    setFile(null)
   }
 
   return (
