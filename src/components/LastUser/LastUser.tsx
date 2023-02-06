@@ -3,6 +3,7 @@ import { Box } from '@mui/system'
 import { getDownloadURL, ref } from 'firebase/storage'
 import React, { useEffect, useState } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
+import { Link } from 'react-router-dom'
 import userAvatar from '../../assets/images/user.png'
 import { auth, storage } from '../../firebase/firebase'
 import { UserInfoType } from '../../store/slices/userSlice'
@@ -45,7 +46,10 @@ const LastUser = ({ userInfo }: UserInfoProps) => {
         src={avatar ? avatar : userAvatar}
         alt="Default user avatar"
       />
-      <Typography>
+      <Typography
+        component={Link}
+        to={`/profile/${userInfo.uid}`}
+        sx={{ color: 'black', textDecoration: 'none' }}>
         {userInfo.name}
       </Typography>
     </Box>

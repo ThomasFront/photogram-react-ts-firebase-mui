@@ -7,11 +7,21 @@ import { db } from '../../firebase/firebase'
 import LastUser from '../LastUser/LastUser'
 import Loader from '../Loader/Loader'
 import { postsLoading } from '../../store/slices/postsSlice'
+import { useLocation } from 'react-router-dom'
 
 const Suggestions = () => {
+  const location = useLocation()
   const [lastUsers, setLastUsers] = useState<Array<UserInfoType>>([])
   const [loading, setLoading] = useState(true)
   const postsLoader = useSelector(postsLoading)
+
+  const handleOpacity = () => {
+    if (location.pathname === '/home') {
+      return 1
+    } else {
+      return 0
+    }
+  }
 
   const getLastUsers = async () => {
     setLoading(true)
@@ -38,7 +48,8 @@ const Suggestions = () => {
       mr: 4,
       p: 2,
       ml: { md: 2, lg: 0 },
-      textAlign: { md: "center", lg: "left" }
+      textAlign: { md: "center", lg: "left" },
+      opacity: handleOpacity
     }}
     >
       {loading ?

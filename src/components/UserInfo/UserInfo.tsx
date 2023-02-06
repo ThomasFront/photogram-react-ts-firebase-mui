@@ -6,6 +6,7 @@ import { Typography } from '@mui/material';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth, storage } from '../../firebase/firebase';
 import { getDownloadURL, ref } from 'firebase/storage';
+import { Link } from 'react-router-dom';
 
 type UserInfoProps = {
   userInfo: UserInfoType
@@ -32,11 +33,13 @@ export const UserInfo = ({ userInfo }: UserInfoProps) => {
   }, [])
 
   return (
-    <Box sx={{
+    <Box component={Link} to={`/profile/${userInfo.uid}`} sx={{
       display: 'flex',
       alignItems: "center",
       gap: 2,
       my: 0.4,
+      color: 'black',
+      textDecoration: 'none'
     }}>
       <img
         style={{ width: '36px', height: '36px', borderRadius: '50%' }}
