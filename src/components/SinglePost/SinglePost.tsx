@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material'
+import { Button, TextField, Typography } from '@mui/material'
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardMedia from '@mui/material/CardMedia';
@@ -16,6 +16,7 @@ import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { useDispatch, useSelector } from 'react-redux';
 import { allPosts } from '../../store/slices/postsSlice'
 import { useEffect, useState } from 'react';
+import { Box } from '@mui/system';
 
 type PostProps = {
   post: PostType
@@ -27,6 +28,7 @@ const SinglePost = ({ post }: PostProps) => {
   const [isLiked, setIsLiked] = useState(false)
   const posts = useSelector(allPosts)
   const dispatch = useDispatch()
+  const [comment, setComment] = useState('')
 
   useEffect(() => {
     if (likes.includes(user?.uid as string)) {
@@ -115,6 +117,12 @@ const SinglePost = ({ post }: PostProps) => {
           <ModeCommentIcon />
         </IconButton>
       </CardActions>
+      <Box sx={{
+        display: 'flex'
+      }}>
+        <TextField label="Napisz komentarz..." variant="filled" sx={{ width: '70%' }} value={comment} onChange={e => setComment(e.target.value)} />
+        <Button variant='contained' size='small' sx={{ width: { xs: '50%', sm: '30%', md: '32%', lg: '30%' }, fontSize: { xs: '9px', sm: '12px', md: '10px', lg: '12px' } }}>Dodaj komentarz</Button>
+      </Box>
     </Card>
   )
 }

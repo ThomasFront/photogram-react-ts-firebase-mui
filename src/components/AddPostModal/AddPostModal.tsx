@@ -53,6 +53,7 @@ export const AddPostModal = () => {
       addedByName: userInfo.name,
       timestamp: Date.now(),
       likes: [],
+      comments: [],
     }
 
     const doc = await addDoc(collection(db, "posts"), post);
